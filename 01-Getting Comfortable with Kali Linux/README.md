@@ -1,7 +1,11 @@
 # 1. ‐ Getting Comfortable with Kali Linux
 
-#### 1.1 ‐ Finding Your Way Around Kali
-* [1.1.3 - Find, Locate, and Which](www.google.com)
+#### [1.1 ‐ Finding Your Way Around Kali](#11-finding-your-way-around-kali_1)
+* [1.1.3 - Find, Locate, and Which](#113-find-locate-and-which)
+	* [locate](#locate)
+	* [which](#which)
+	* [find](#find)
+	* [Exercicies](#exercicies)
 
 #### 1.2 - Managing Kali Linux Services
 * 1.2.1 - Default root Password
@@ -26,6 +30,7 @@ root@kali:~# locate sbd.exe
 ```
 
 ### which
+
 The which command searches through the directories that are defined in the **$PATH** environment variable for a given filename. If a match is found, which returns the full path to the file as shown below.
 ```
 root@kali:~# which sbd
@@ -33,6 +38,7 @@ root@kali:~# which sbd
 ```
 
 ### find
+
 The find command is a more aggressive search tool than locate or which. Find is able to recursively search any given path for various files.
 ```
 root@kali:~# find / -­‐name sbd*
