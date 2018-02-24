@@ -7,10 +7,19 @@
 	* [find](#find)
 	* [Exercicies](#exercicies)
 
-#### 1.2 - Managing Kali Linux Services
-* 1.2.1 - Default root Password
-* 1.2.2 - SSH Service
-* 1.2.3 - HTTP Service
+#### [1.2 - Managing Kali Linux Services](#12---managing-kali-linux-services-1)
+* [1.2.1 - Default root Password](#121---default-root-password)
+* [1.2.2 - SSH Service](#122---ssh-service)
+* [1.2.3 - HTTP Service](#123-http-service)
+* [Exercicies](#exercicies-1)
+
+#### [1.3 - The Bash Environment](#13---the-bash-environment)
+
+#### [1.4 - Into to Bash Scripting](#14---into-to-bash-scripting)
+* [1.4.1 - Pratical Bash Usage - Example 1](141---pratical-bash-usage---example-1)
+* [1.4.2 - Practical Bash Usage - Example 2](#142---practical-bash-usage---example-2)
+* [Exercicies](#exercicies-2)
+
 ---
 
 ## 1.1 ‐ Finding Your Way Around Kali
