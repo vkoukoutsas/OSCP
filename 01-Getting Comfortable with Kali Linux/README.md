@@ -300,3 +300,11 @@ root@kali:~# cat access.log | cut -d " " -f1 | sort | uniq -c | sort -urn
 	10   88.11.27.23
 	6    172.16.40.254    
 ```
+
+A few IP addresses stand out, but we will focus on the address that has the highest access frequency first. To display and ount the resources that were  being requested by the IP ddress, the following command sequence can be used:
+
+```
+root@kali:~# cat access.log | grep '205.167.170.15' | cut -d "\"" -f2 | uniq -c
+1038
+GET    //admin    HTTP/1.1
+```
