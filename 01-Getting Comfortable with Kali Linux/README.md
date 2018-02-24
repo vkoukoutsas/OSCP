@@ -308,3 +308,17 @@ root@kali:~# cat access.log | grep '205.167.170.15' | cut -d "\"" -f2 | uniq -c
 1038
 GET    //admin    HTTP/1.1
 ```
+
+From this output, it seems that the IP address at 208.68.234.99 was accesssing the **/admin** directory exclusively. Let's take a closer look at this:
+
+```
+root@kali:~# cat access.log | grep '208.68.234.99' | grep '/admin' | sort -u
+
+208.68.234.99 ­‐ ­‐ [22/Apr/2013:07:51:20 ­‐0500] "GET //admin HTTP/1.1" 401 742 "­‐" "Teh    Forest    Lobster"
+
+root@kali:~# cat access.log|grep '208.68.234.99'| grep ­‐v 
+```
+
+It seems like 208.68.234.99 has been involved in an HTTP brute force attemp against this web server. Furthermore, after about 1070 attemps, it seems like the brute force attempt succeeded, as indicated by the HTTP 200 message.
+
+### Exercicies
