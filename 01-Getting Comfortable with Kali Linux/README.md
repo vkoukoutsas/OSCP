@@ -322,3 +322,30 @@ root@kali:~# cat access.log|grep '208.68.234.99'| grep ­‐v
 It seems like 208.68.234.99 has been involved in an HTTP brute force attemp against this web server. Furthermore, after about 1070 attemps, it seems like the brute force attempt succeeded, as indicated by the HTTP 200 message.
 
 ### Exercicies
+
+1. Research bash loops and write a short script to perform a ping sweep of your current subnet.
+
+```bash
+root@kali:~# for i in {1..5};do ping -c1 127.0.0.1; done
+```
+
+2. Try to do the above exercise with a higher-level scripting language such as Python, Perl, or Ruby.
+
+```python
+import sys
+import os
+
+print("Ping in Python")
+
+def ping(host):
+    rsp = os.system("ping -c3 " + host)
+
+    if rsp == 0:
+        print("[*] Host: " + host + " is up!")
+    else:
+        print("[!] Host: " + host + " is down!")
+
+ping(sys.argv[1])
+```
+
+3. Ensure you understand the difference between directing output from a command line to a file (**>**) and output form a command as input to another command (**|**)
