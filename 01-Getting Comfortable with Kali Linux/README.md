@@ -13,10 +13,10 @@
 * [1.2.3 - HTTP Service](#123-http-service)
 * [Exercicies](#exercicies-1)
 
-#### [1.3 - The Bash Environment](#13---the-bash-environment)
+#### [1.3 - The Bash Environment](#13---the-bash-environment-1)
 
-#### [1.4 - Into to Bash Scripting](#14---into-to-bash-scripting)
-* [1.4.1 - Pratical Bash Usage - Example 1](141---pratical-bash-usage---example-1)
+#### [1.4 - Into to Bash Scripting](#14---into-to-bash-scripting-1)
+* [1.4.1 - Pratical Bash Usage - Example 1](#141---pratical-bash-usage---example-1)
 * [1.4.2 - Practical Bash Usage - Example 2](#142---practical-bash-usage---example-2)
 * [Exercicies](#exercicies-2)
 
