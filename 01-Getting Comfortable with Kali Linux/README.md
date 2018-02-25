@@ -1,5 +1,7 @@
 # 1. ‐ Getting Comfortable with Kali Linux
 
+##### p.22
+
 #### [1.1 ‐ Finding Your Way Around Kali](#11-finding-your-way-around-kali_1)
 * [1.1.3 - Find, Locate, and Which](#113-find-locate-and-which)
 	* [locate](#locate)
