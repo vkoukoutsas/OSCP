@@ -333,3 +333,5 @@ Once the traffic is captured, we can select the traffic we want Wireshark to dis
 
 ### 2.3.4 - Following TCP Streams
 
+At times, we might not have access to GUI network sniffers such as Wireshark. In these instances, we can use the command line **tcpdump** utility.
+Tcpdump is one of the most common command0line packet analyzers and can be found on most Unix and Linux operating systems.
