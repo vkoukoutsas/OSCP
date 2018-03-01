@@ -332,6 +332,46 @@ Capture dumps are rarely as clear, as there is usually a lot of background traff
 Once the traffic is captured, we can select the traffic we want Wireshark to display to us using display filters (top left).
 
 ### 2.3.4 - Following TCP Streams
+ In order to view a particular TCP stream, we right-click a packet of interest, then select "Follow TCP Stream" from the context menu. The TCP Stream will open a new windows.
+
+
+## 2.4 - Tcpdump
+##### p. 57
 
 At times, we might not have access to GUI network sniffers such as Wireshark. In these instances, we can use the command line **tcpdump** utility.
 Tcpdump is one of the most common command0line packet analyzers and can be found on most Unix and Linux operating systems.
+Tcpdump can capture files from the network, or read existing capture files.
+
+```
+root@kali:~# tcpdump ­‐r password_cracking_filtered.pcap
+```
+
+### 2.4.1 - Filtering Traffic
+
+The output is a bit overwhelming at first, so let's try to get a better unsderstanding of the IP addresses and ports involved by using **awk** and **sort**.
+
+```
+root@kali:~# tcpdump -r password.pcap | awk -F" " '{print $3}' | sort -u | head
+```
+
+It seems that 208.68.234.99 made multiple requests to 172.16.40.10, on port 81. We can easily filter for destination, or source IPs and ports with syntax similar to the following:
+
+```
+tcpdump ­‐n src host 172.16.40.10 ­‐r password_cracking_filtered.pcap
+tcpdump ‐n dst host 172.16.40.10 ­‐r password_cracking_filtered.pcap
+tcpdump ­‐n port 81 ‐r password_cracking_filtered.pcap
+```
+
+We proceed to dump the actual traffic captured in the dump file, in hex format, to see if we can glean any additional information from the data that was transferred:
+
+```
+root@kali:~# tcpdump -­nX -­r password_cracking_filtered.pcap
+```
+
+### 2.4.2 - Advanced Header Filtering
+
+Our command look similar to the following - specifying that the 14º byte in the packets displayed should have ACK or PSH flags set:
+
+```
+root@kali:~# tcpdump -­A -­n 'tcp[13]=24' -­r password_cracking_filtered.pcap
+```
