@@ -151,7 +151,7 @@ DNSEnum is another popular DNS enumeration tool. Runnign this script against the
 
 > root@kali:~# dnsenum zonetransfer.me
 
-## 4.1.7 - Exercicies
+### 4.1.7 - Exercicies
 
 1. Find the DNS servers for the megacorpone.com domain.
 
@@ -169,3 +169,42 @@ megacorpone.com name server ns2.megacorpone.com.
 3. Use **dnsrecon** to attempt a zone transfer from a domain.
 
 > root@kali:~# dnsrecon -d megacorpone.com -t axfr
+
+## 4.2 - Port Scanning
+
+**Please note that port scanning is illegal in many countries.**
+
+Port scanning is the process of checking for open TCP or UDP ports on a remote machine.
+
+### 4.2.1 - TCP CONNECT/SYN Scanning
+
+#### 4.2.1.1 - Connect Scanning
+
+The simplest TCP port scanning technique, usually called CONNECT scanning, relies on the three-way TCP handshake mechanism. If the handshake is completed, this indicates that port is open.
+
+Using **nc** comannd to find opent ports
+
+> nc -nvv -w 1 -z [host IP] [port range]
+
+<br>
+
+> nc -nvv -w 1 -z 10.0.09 1-65535
+
+#### 4.2.1.2 - Stealth/SYN Scanning
+
+SYN scanning, is a TCP port scanning method that involves sending SYN packets to various ports on a target machine without completing a TCP handshake. If a TCP port is open, a SYN-ACK should be sent back from the target machine, informing us that the port is open, without the need to send a final ACK back to the target machine.
+
+### 4.2.2 - UDP Scanning
+
+Since UDP is stateless, and does not involve a three-way handshake, the mechanism behind UDP port scanning is different.
+
+> nc -nv -u -z -w 1 [host IP] [port range]
+
+<br>
+
+> nc -nv -u -z -w 1 10.0.0.19 160-162
+
+### 4.2.3 - Common Port Scanning Pitfalls
+
+* UDP port scanning is often unreliable, as firewalls and routers may drop ICMP packets. This can lead to false positives in your scan, and you will regularly see UDP port scans showing all UDP ports open on a scanned machine.
+* Most port scanners do not scan all available ports, and usually have a preset list of "interesting ports" that are scanned.
