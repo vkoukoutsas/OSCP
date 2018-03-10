@@ -208,3 +208,12 @@ Since UDP is stateless, and does not involve a three-way handshake, the mechanis
 
 * UDP port scanning is often unreliable, as firewalls and routers may drop ICMP packets. This can lead to false positives in your scan, and you will regularly see UDP port scans showing all UDP ports open on a scanned machine.
 * Most port scanners do not scan all available ports, and usually have a preset list of "interesting ports" that are scanned.
+* People often forget to scan for UDP services, and stick only to tcp scanning, thereby seeing only half of the equation.
+
+### 4.2.4 - Port Scanning with Nmap
+
+##### [Nmap](https://nmap.org/)
+
+Nmap is one of the most popular, versatile, and robust port scanners to date.
+
+#### 4.2.4.1 - Accountability for Your Traffic
