@@ -1,0 +1,63 @@
+# 4. - Active Information Gathering
+
+ Once you have gathered enough information about your target, using open web resources, and other passive information gathering techiniques, you can further gather relevant information from other, more specific services.
+
+## 4.1 - DNS Enumeration
+
+DNS is often a lucrative source for active information gathering. DNS offers a variety of information about public (and private) organization servers, such as IP addresses, server names, and server functionality.
+
+### 4.1.1 - Interacting with a DNS Server
+
+A DNS server will usually divulge DNS and mail server information for the domain it has authoroty over. This is a necessity, as public requests for mail and DNS server addresses make up the basic Internet experience.
+We'll use the **host** command, together with the **-t** (type) parameter to discover both the DNS and mail servers for the **megacorpone.com** domain.
+
+```
+root@kali:~# host -t ns megacorpone.com
+megacorpone.com name server ns1.megacorpone.com.
+megacorpone.com name server ns3.megacorpone.com.
+megacorpone.com name server ns2.megacorpone.com.
+
+root@kali:~# host -t mx megacorpone.com
+megacorpone.com mail is handled by 50 mail.megacorpone.com.
+megacorpone.com mail is handled by 60 mail2.megacorpone.com.
+megacorpone.com mail is handled by 10 fb.mail.gandi.net.
+megacorpone.com mail is handled by 20 spool.mail.gandi.net.
+```
+
+By default, every configured domain should provide at least the DNS and mail servers responsible for the domain.
+
+### 4.1.2 - Automating Lookups
+
+Now that we have some initital data from the **megacorpone.com** domain, we can continue to use additional DNS queries to discover more host names and IP addresses belonging to **megacorpone.com**. For example, we can assume that the **megacorpone.com**ain has a web server, probably with the hostname **www**.
+We can test this theory using the **host** command once again.
+
+```
+root@kali:~# host www.megacorpone.com
+www.megacorpone.com has address 38.100.193.76
+```
+
+Now, let's check if **megacorpone.com** also has a server with the hostname *idontexist*. Notice the difference between the query outputs.
+
+```
+root@kali:~# host idontexist.megacorpone.com
+idontexist.megacorpone.com has address 92.242.140.20
+Host idontexist.megacorpone.com not found: 3(NXDOMAIN)
+```
+
+### 4.1.3 - Forward Lookup Brute Force
+
+Taking the previous concept a step further, we can automate the Forward DNS Lookup of commmon host names using the **host** command and a Bash script. We can create a short (or long) list of possible hostnames and loop the **host** command to try each one.
+
+```
+root@kali:~# echo www > list.txt
+root@kali:~# echo ftp >> list.txt
+root@kali:~# echo mail >> list.txt
+root@kali:~# echo owa >> list.txt
+root@kali:~# echo proxy >> list.txt
+root@kali:~# echo router >> list.txt
+root@kali:~# for ip in $(cat list.txt);do host $ip.megacorpone.com;done
+```
+
+Is this simplified example, we notice that the hostnames **www**, **router**, and **mail** have been discovered through this brute-force attack.
+
+### 4.1.4 - Reverse Lookup Brute Force
