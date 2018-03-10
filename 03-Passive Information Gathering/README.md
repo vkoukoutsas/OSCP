@@ -126,7 +126,7 @@ root@kali:~# theharvester -d apple.com -b googleCSE -l 500 -s 300
 
 1. Use **theharvester** to enumerate email addresses belonging to the organization you chose in the previous exercicies.
 
-> root@kali:~# theharvester -d example.com -b google
+> root@kali:~# theharvester -d cisco.com -b google
 
 2. Experiment with different data sources (**-b**). Which work best for you?
 
@@ -134,7 +134,7 @@ root@kali:~# theharvester -d apple.com -b googleCSE -l 500 -s 300
 
 <br>
 
-> root@kali:~# theharvester -d example.com -b bing
+> root@kali:~# theharvester -d cisco.com -b bing
 
 ## 3.3 - Additional Resources
 
@@ -146,8 +146,54 @@ Netcraft can be used to indirectly find out information about web servers on the
 
 ### 3.3.2 - Whois Enumeration
 
+##### [Whois](https://en.wikipedia.org/wiki/Whois)
+
 Whois is a name for a TCP service, a tool, and a type of database. Whois databases contain name server, registrar, and, in some cases, full contact information about a domain name. These databases are usually published by a whois server over **TCP port 43** and are accessible using **whois** client program.
 
 ```
 root@kali:~# whois megacorpone.com
+```
+
+The **whois** client can also perform reverse lookups. Rather than inputting a domain name, you can provide an IP address:
+
+```
+root@kali:~# whois 50.7.67.186
+```
+
+### 3.3.3 - Exercicies
+
+1. Use the **whois** tool in kali to identify the name servers of your target organization.
+
+```
+root@kali:~# whois cisco.com
+```
+
+## 3.4 - Recon-ng
+
+##### [Recon-ng](https://tools.kali.org/information-gathering/recon-ng)
+
+Recon-ng is a full-featured web reconnaissance framework written in Python. Complete wih independent modules, database, interaction, built in convenience functios, interactive help, and command completion.
+
+Let's use **recon-ng** to quickly compile a list of interestig data. We'll start by using the <b>*whois_poc*</b> module to come up with employee names and email addresses at Cisco.
+
+```
+root@kali:~# recon-ng
+
+[recon-ng][default] > use recon/domains-contacts/whois_pocs
+[recon-ng][default][whois_pocs] > show options
+
+  Name    Current Value  Required  Description
+  ------  -------------  --------  -----------
+  SOURCE  			      yes       source of input (see 'show info' for details)
+
+[recon-ng][default][whois_pocs] > set SOURCE cisco.com
+SOURCE => cisco.com
+
+[recon-ng][default][whois_pocs] > run
+
+--------------
+CISCO.COM
+--------------
+[*] URL: http://whois.arin.net/rest/pocs;domain=cisco.com
+							...
 ```
