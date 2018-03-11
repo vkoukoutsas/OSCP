@@ -820,4 +820,10 @@ VRFY idontexist
 
 Notice the difference in the message received when a user is present on the system. The SMTP server happily verifies that the user exists. This procedure can be used to help guess valid usernames.
 
-[](#)
+[smtp-vrfy.py](#)
+
+### 4.4.1 - Exercise
+
+1. Search your target network range, and see if you can identify any systems that respond to the SMTP *VRFY* command.
+
+## 4.5 - SNMP Enumeration
