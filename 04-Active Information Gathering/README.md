@@ -156,7 +156,7 @@ DNSEnum is another popular DNS enumeration tool. Runnign this script against the
 1. Find the DNS servers for the megacorpone.com domain.
 
 ```
-host -t ns megacorpone.com
+root@kali:~# host -t ns megacorpone.com
 megacorpone.com name server ns1.megacorpone.com.
 megacorpone.com name server ns3.megacorpone.com.
 megacorpone.com name server ns2.megacorpone.com.
@@ -184,11 +184,11 @@ The simplest TCP port scanning technique, usually called CONNECT scanning, relie
 
 Using **nc** comannd to find opent ports
 
-> nc -nvv -w 1 -z [host IP] [port range]
+> root@kali:~# nc -nvv -w 1 -z [host IP] [port range]
 
 <br>
 
-> nc -nvv -w 1 -z 10.0.09 1-65535
+> root@kali:~# nc -nvv -w 1 -z 10.0.09 1-65535
 
 #### 4.2.1.2 - Stealth/SYN Scanning
 
@@ -198,11 +198,11 @@ SYN scanning, is a TCP port scanning method that involves sending SYN packets to
 
 Since UDP is stateless, and does not involve a three-way handshake, the mechanism behind UDP port scanning is different.
 
-> nc -nv -u -z -w 1 [host IP] [port range]
+> root@kali:~# nc -nv -u -z -w 1 [host IP] [port range]
 
 <br>
 
-> nc -nv -u -z -w 1 10.0.0.19 160-162
+> root@kali:~# nc -nv -u -z -w 1 10.0.0.19 160-162
 
 ### 4.2.3 - Common Port Scanning Pitfalls
 
@@ -217,3 +217,40 @@ Since UDP is stateless, and does not involve a three-way handshake, the mechanis
 Nmap is one of the most popular, versatile, and robust port scanners to date.
 
 #### 4.2.4.1 - Accountability for Your Traffic
+
+A default **nmap** TCP scan will scan the 1000 most popular ports on a given machine.
+
+```
+root@kali:~# nmap -sT 192.168.0.104
+
+Starting Nmap 7.01 ( https://nmap.org ) at 2018-03-11 09:42 -04
+Nmap scan report for 192.168.0.104
+Host is up (0.0017s latency).
+Not shown: 977 closed ports
+PORT     STATE SERVICE
+21/tcp   open  ftp
+22/tcp   open  ssh
+23/tcp   open  telnet
+25/tcp   open  smtp
+53/tcp   open  domain
+80/tcp   open  http
+111/tcp  open  rpcbind
+139/tcp  open  netbios-ssn
+445/tcp  open  microsoft-ds
+512/tcp  open  exec
+513/tcp  open  login
+514/tcp  open  shell
+1099/tcp open  rmiregistry
+1524/tcp open  ingreslock
+2049/tcp open  nfs
+2121/tcp open  ccproxy-ftp
+3306/tcp open  mysql
+5432/tcp open  postgresql
+5900/tcp open  vnc
+6000/tcp open  X11
+6667/tcp open  irc
+8009/tcp open  ajp13
+8180/tcp open  unknown
+
+Nmap done: 1 IP address (1 host up) scanned in 1.66 seconds
+```
