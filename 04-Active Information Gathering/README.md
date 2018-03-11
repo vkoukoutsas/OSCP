@@ -699,3 +699,125 @@ root@kali:~# nmap -v -Pn --script smb-* 192.168.0.104
 [nmap-cheat-sheet](#)
 
 ## 4.3 - SMB Enumeration
+
+##### [SMB wiki](https://en.wikipedia.org/wiki/Server_Message_Block)
+
+The Server Message Block (SMB) protocol's security track record has been poor for over a decade, due to its complex implementation, and open nature. From unauthenticated SMB null sessions in Windows 2000 and XP, to a plethora of SMB bugs and vulnerabilities over the years, SMB has seen its fair share of action.
+
+* SMB version numbers, and their related Windows Operating system versions:
+	* **SMB1** - Windows 2000, XP and Windows 2003
+	* **SMB2** - Windows Vista SP1 and Windows 2008
+	* **SMB2.1** - Windows 7 and Windows 2008 R2
+	* **SMB3** - Windows 8 and Windows 2012
+
+### 4.3.1 - Scanning for the NetBIOS Service
+
+##### [NetBIOS wiki](https://en.wikipedia.org/wiki/NetBIOS)
+
+The SMB NetBIOS service listens on TCP ports 139 and 445, as well as several UDP ports. These can be scanned with tools, such as **nmap**, using syntax similar to the following:
+
+```
+root@kali:~# nmap -v -p 138,445 -oG smb.txt 192.168.11.200-254
+```
+
+There are other, more specialized, tools for specifically identifying NetBIOS information, such as **nbtscan** as shown below.
+
+```
+root@kali:~# nbtscan -r 192.168.11.0/24
+```
+
+## 4.3.2 - Null Session Enumeration
+
+##### [enum4linux](https://tools.kali.org/information-gathering/enum4linux)
+
+A null session refers to an unauthenticated NetBIOS session betwee two computers. This feature exists to allow unauthenticated machines to obtain browse lists from other Microsoft servers. A null session also allows unauthenticated hackers to obtain large amounts of information about the machine, such as password polices, usernames, group names, machine names, user and host SIDs.
+A useful tool for this is **enum4linux**, present in Kali. It is written in Perl and is basically a wrapper around the [Samba](http://www.samba.org/) tools **smbclient**, **rpcclient**, **net** and **nmblookup**.
+
+```
+root@kali:~# enum4linux -a 192.168.11.227
+```
+
+###### For more information about **enum4linux**, check out the examples available on the [Portcullis Labs website](http://labs.portcullis.co.uk/tools/enum4linux/)
+
+### 4.3.3 - Nmap SMB NSE Scripts
+
+##### [NSE scripts](https://nmap.org/nsedoc/)
+
+Nmap contains many useful NSE scripts that can be used to discover and enumerate SMB services. These scripts can be found in the **/usr/share/nmap/scripts** directory.
+
+```
+root@kali:~# ls /usr/share/nmap/scripts/smb*
+/usr/share/nmap/scripts/smb-brute.nse
+/usr/share/nmap/scripts/smb-enum-domains.nse
+/usr/share/nmap/scripts/smb-enum-groups.nse
+/usr/share/nmap/scripts/smb-enum-processes.nse
+/usr/share/nmap/scripts/smb-enum-sessions.nse
+/usr/share/nmap/scripts/smb-enum-shares.nse
+/usr/share/nmap/scripts/smb-enum-users.nse
+/usr/share/nmap/scripts/smb-flood.nse
+/usr/share/nmap/scripts/smb-ls.nse
+/usr/share/nmap/scripts/smb-mbenum.nse
+/usr/share/nmap/scripts/smb-os-discovery.nse
+/usr/share/nmap/scripts/smb-print-text.nse
+/usr/share/nmap/scripts/smb-psexec.nse
+/usr/share/nmap/scripts/smb-security-mode.nse
+/usr/share/nmap/scripts/smb-server-stats.nse
+/usr/share/nmap/scripts/smb-system-info.nse
+/usr/share/nmap/scripts/smbv2-enabled.nse
+/usr/share/nmap/scripts/smb-vuln-conficker.nse
+/usr/share/nmap/scripts/smb-vuln-cve2009-3103.nse
+/usr/share/nmap/scripts/smb-vuln-ms06-025.nse
+/usr/share/nmap/scripts/smb-vuln-ms07-029.nse
+/usr/share/nmap/scripts/smb-vuln-ms08-067.nse
+/usr/share/nmap/scripts/smb-vuln-ms10-054.nse
+/usr/share/nmap/scripts/smb-vuln-ms10-061.nse
+/usr/share/nmap/scripts/smb-vuln-regsvc-dos.nse
+```
+
+We can see thtat several interesting Nmap SMB NSE scripts exist, such as OS discovery and enumeration of various pieces of information from the protocol.
+
+```
+root@kali:~# nmap -v -p 139, 445 --script=smb-os-discovery 192.168.11.227
+```
+
+To check for known SMB protocol vulnerabilities, you can invoke the **nmap** <b>*smb-check-vulns*</b> script as shown below.
+
+```
+root@kali:~# nmap -v -p 139,445 --script=smb-check-vulns --script-args=unasafe=1 192.168.11.201
+```
+
+In this case, **nmap** identifies that the specific SMB service is missing at least one critical patch for the [MS08-067](https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067) vulnerability.
+
+### 4.3.4 - Exercises
+
+1. Use Nmap to make a list of which SMB servers in the lab are running Windows.
+
+2. Use NSE scripts to scan these systems for SMB vulnerabilities.
+
+```
+root@kali:~# nmap -v -p 139,445 --script=smb-check-vulns --script-args=unasafe=1 192.168.11.201
+```
+
+3. Use **nbtscan** and **enum4linux** against these systems and identify the kinds of data you can obtain from different versions of Windows.
+
+## 4.4 - SMTP Enumeration
+
+##### [SMTP](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol)
+
+In certain vulnerable configurations, mail servers can also be used to gather information about a host or network. SMTP supports several important commands, such as **VRFY** and **EXPN**. A **VRFY** request asks the server to verify an email address, while **EXPN** asks the server for the membership of a mailing list.
+
+Example:
+
+```
+root@kali:~# nc -nv 192.168.0.104 25
+Connection to 192.168.0.104 25 port [tcp/*] succeeded!
+220 metasploitable.localdomain ESMTP Postfix (Ubuntu)
+VRFY root
+252 2.0.0 root
+VRFY idontexist
+550 5.1.1 <idontexist>: Recipient address rejected: User unknown in local recipient table
+```
+
+Notice the difference in the message received when a user is present on the system. The SMTP server happily verifies that the user exists. This procedure can be used to help guess valid usernames.
+
+[](#)
