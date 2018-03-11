@@ -687,3 +687,13 @@ OS detection performed. Please report any incorrect results at https://nmap.org/
 Nmap done: 4 IP addresses (3 hosts up) scanned in 7.90 seconds
 
 ```
+
+3. Use the NSE scripts to scan the servers in the labs wich are running the SMB service.
+
+```
+root@kali:~# nmap -v -Pn --script smb-* 192.168.0.104
+```
+
+4. Explore the various command line options that nmap offers while scanning an online host you discovered within your target IP range. Monitor the bandwidth usage changes for the different options. Weigh the use of collecting as much informations possible against the resources it takes to gather it.
+
+[nmap-cheat-sheet](#)
