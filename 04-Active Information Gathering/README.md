@@ -697,3 +697,5 @@ root@kali:~# nmap -v -Pn --script smb-* 192.168.0.104
 4. Explore the various command line options that nmap offers while scanning an online host you discovered within your target IP range. Monitor the bandwidth usage changes for the different options. Weigh the use of collecting as much informations possible against the resources it takes to gather it.
 
 [nmap-cheat-sheet](#)
+
+## 4.3 - SMB Enumeration
