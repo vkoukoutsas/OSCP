@@ -827,3 +827,46 @@ Notice the difference in the message received when a user is present on the syst
 1. Search your target network range, and see if you can identify any systems that respond to the SMTP *VRFY* command.
 
 ## 4.5 - SNMP Enumeration
+
+##### [SNMP](https://en.wikipedia.org/wiki/Simple_Network_Management_Protocol)
+
+Over the years, we have often found that Simple Network Management Protocol (SNMP) is a poorly understood protocol by many network administrators. This often results in SNMP misconfigurations, which can result in a dramatic information leakage. SNMP is based on UDP, a simple, stateless protocol, and is therefore susceptible to IP spoofing, and replay attacks. In a addition, the commonly used SNMP protocols 1, 2 and 2c offer no traffic encryption, meaning SNMP information and credentials can be easily intercepted over a local network. Traditional SNMP protocols also have weak authentication schemes, and are commonly left configured with default public and private community strings.
+<br>
+Now, consider that all of the above applies to a protocol, which by definition is meant to "Manege the Network".
+
+### 4.5.1 - MIB Tree
+
+The SNMP Management Information Base ([MIB](https://en.wikipedia.org/wiki/Management_information_base)) is a databse containing information usually related to network management. The database is organized like a tree, where branches represent different organizations or network functions. The leaves of the tree (final endpoints) correspond to specific variable values that can then be accessed, and probed, by an external user.
+
+For example, the following MIB values corresponf to specific Microsoft Windows SNMP parameters.
+
+| - | - |
+| - | - |
+| 1.3.6.1.2.1.25.1.6.0  | System Processes |
+| 1.3.6.1.2.1.25.4.2.1.2 | Running Programs |
+| 1.3.6.1.2.1.25.4.2.1.4 | Processes Path |
+| 1.3.6.1.2.1.25.2.3.1.4 | Storage Units |
+| 1.3.6.1.2.1.25.6.3.1.2 | Software Name |
+| 1.3.6.1.4.1.77.1.2.25 | User Accounts |
+| 1.3.6.1.2.1.6.13.1.3	| TCP Local Ports |
+
+### 4.5.2 - Scanning for SNMP
+
+To scan open SNMP ports, we can use **nmap** with syntax similar to:
+
+```
+root@kali:~# nmap -sU --open -p 161 192.168.11.200-254 -oG mega-snmp.txt
+```
+
+Alternatively, we can use a toll such as **onesixtyone**, wich will check for given community strings against an IP list, allowing us to brute force various community strings.
+
+```
+root@kali:~# echo public > community
+root@kali:~# echo private >> community
+root@kali:~# echo manager >> community
+root@kali:~# for ip in $(seq 200 254);do echo 192.168.11.$ip;done > ips
+root@kali:~# onesixtyone -c community -i ips
+```
+
+Once these SNMP services are found, we can start querying them for specific MIB data that misght be interesting to us.
+
