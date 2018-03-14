@@ -870,3 +870,42 @@ root@kali:~# onesixtyone -c community -i ips
 
 Once these SNMP services are found, we can start querying them for specific MIB data that misght be interesting to us.
 
+### 4.5.3 - Windows SNMP Enumeration Example
+
+We can probe and query SNMP values using a tool such as **snmpwalk** provide we at least know the SNMP read-only community string, wich in most cases is "<b>*public*</b>". Using some of the MIB values provided above, we could attemp to enumerate their corresponding values.
+
+#### Enumerating the Entire MIB Tree:
+
+```
+root@kali:~# snmpwalk -c public -v1 192.168.11.204 1.3.6.1.4.1.77.1.2.25
+```
+
+#### Enumerating Windows Users:
+
+```
+root@kali:~# snmpwalk -c public -v1 192.168.11.204 1.3.6.1.2.1.25.4.2.1.2
+```
+
+#### Enumerating Running Windows Processes:
+
+```
+root@kali:~# snmpwalk -c public -v1 192.168.11.204 1.3.6.1.2.1.6.13.1.3
+```
+
+#### Enumerating Open TCP Ports:
+
+```
+root@kali:~# snmpwalk -c public -v1 192.168.11.204 1.3.6.1.2.1.6.13.1.3
+```
+
+#### Enumerating Installed Software:
+
+```
+root@kali:~# snmpwalk -c public -v1 192.168.11.204 1.3.6.1.2.1.25.6.3.1.2
+```
+
+### 4.5.4 - Exercicies
+
+1. Scan yout target network with **onesixtyone**. Identify any SNMP servers.
+
+2. Use **snmpwalk** and **snmpcheck** to gather information about the discovered targets.

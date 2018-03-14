@@ -1015,6 +1015,7 @@ body .markdown-body
   }
 }
 </style><title>README</title></head><body><article class="markdown-body"><h1 id="4-active-information-gathering"><a name="user-content-4-active-information-gathering" href="#4-active-information-gathering" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4. - Active Information Gathering</h1>
+<h5 id="p-82"><a name="user-content-p-82" href="#p-82" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>p. 82</h5>
 <p>Once you have gathered enough information about your target, using open web resources, and other passive information gathering techiniques, you can further gather relevant information from other, more specific services.</p>
 <h2 id="41-dns-enumeration"><a name="user-content-41-dns-enumeration" href="#41-dns-enumeration" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.1 - DNS Enumeration</h2>
 <p>DNS is often a lucrative source for active information gathering. DNS offers a variety of information about public (and private) organization servers, such as IP addresses, server names, and server functionality.</p>
@@ -1142,7 +1143,7 @@ root@kali:~# dnsrecon -d megacorpone.com -t axfr</p>
 <ol>
 <li>Find the DNS servers for the megacorpone.com domain.</li>
 </ol>
-<pre><code>host -t ns megacorpone.com
+<pre><code>root@kali:~# host -t ns megacorpone.com
 megacorpone.com name server ns1.megacorpone.com.
 megacorpone.com name server ns3.megacorpone.com.
 megacorpone.com name server ns2.megacorpone.com.
@@ -1168,17 +1169,662 @@ megacorpone.com name server ns2.megacorpone.com.
 <p>The simplest TCP port scanning technique, usually called CONNECT scanning, relies on the three-way TCP handshake mechanism. If the handshake is completed, this indicates that port is open.</p>
 <p>Using <strong>nc</strong> comannd to find opent ports</p>
 <blockquote>
-<p>nc -nvv -w 1 -z [host IP] [port range]</p>
+<p>root@kali:~# nc -nvv -w 1 -z [host IP] [port range]</p>
 </blockquote>
 <p><br></p>
 <blockquote>
-<p>nc -nvv -w 1 -z 10.0.09 1-65535</p>
+<p>root@kali:~# nc -nvv -w 1 -z 10.0.09 1-65535</p>
 </blockquote>
 <h4 id="4212-stealthsyn-scanning"><a name="user-content-4212-stealthsyn-scanning" href="#4212-stealthsyn-scanning" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.2.1.2 - Stealth/SYN Scanning</h4>
 <p>SYN scanning, is a TCP port scanning method that involves sending SYN packets to various ports on a target machine without completing a TCP handshake. If a TCP port is open, a SYN-ACK should be sent back from the target machine, informing us that the port is open, without the need to send a final ACK back to the target machine.</p>
 <h3 id="422-udp-scanning"><a name="user-content-422-udp-scanning" href="#422-udp-scanning" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.2.2 - UDP Scanning</h3>
 <p>Since UDP is stateless, and does not involve a three-way handshake, the mechanism behind UDP port scanning is different.</p>
 <blockquote>
-<p>nc -nv -u -z -w 1 [host IP] [port range]</p>
+<p>root@kali:~# nc -nv -u -z -w 1 [host IP] [port range]</p>
 </blockquote>
-<p><br></p></article></body></html>
+<p><br></p>
+<blockquote>
+<p>root@kali:~# nc -nv -u -z -w 1 10.0.0.19 160-162</p>
+</blockquote>
+<h3 id="423-common-port-scanning-pitfalls"><a name="user-content-423-common-port-scanning-pitfalls" href="#423-common-port-scanning-pitfalls" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.2.3 - Common Port Scanning Pitfalls</h3>
+<ul>
+<li>UDP port scanning is often unreliable, as firewalls and routers may drop ICMP packets. This can lead to false positives in your scan, and you will regularly see UDP port scans showing all UDP ports open on a scanned machine.</li>
+<li>Most port scanners do not scan all available ports, and usually have a preset list of &ldquo;interesting ports&rdquo; that are scanned.</li>
+<li>People often forget to scan for UDP services, and stick only to tcp scanning, thereby seeing only half of the equation.</li>
+</ul>
+<h3 id="424-port-scanning-with-nmap"><a name="user-content-424-port-scanning-with-nmap" href="#424-port-scanning-with-nmap" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.2.4 - Port Scanning with Nmap</h3>
+<h5 id="nmap"><a href="https://nmap.org/">Nmap</a></h5>
+<p>Nmap is one of the most popular, versatile, and robust port scanners to date.</p>
+<h4 id="4241-accountability-for-your-traffic"><a name="user-content-4241-accountability-for-your-traffic" href="#4241-accountability-for-your-traffic" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.2.4.1 - Accountability for Your Traffic</h4>
+<p>A default <strong>nmap</strong> TCP scan will scan the 1000 most popular ports on a given machine.</p>
+<h5 id="metasploitable-vm"><a name="user-content-metasploitable-vm" href="#metasploitable-vm" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Metasploitable vm</h5>
+<pre><code>root@kali:~# nmap -sT 192.168.0.104
+
+Starting Nmap 7.01 ( https://nmap.org ) at 2018-03-11 09:42 -04
+Nmap scan report for 192.168.0.104
+Host is up (0.0017s latency).
+Not shown: 977 closed ports
+PORT     STATE SERVICE
+21/tcp   open  ftp
+22/tcp   open  ssh
+23/tcp   open  telnet
+25/tcp   open  smtp
+53/tcp   open  domain
+80/tcp   open  http
+111/tcp  open  rpcbind
+139/tcp  open  netbios-ssn
+445/tcp  open  microsoft-ds
+512/tcp  open  exec
+513/tcp  open  login
+514/tcp  open  shell
+1099/tcp open  rmiregistry
+1524/tcp open  ingreslock
+2049/tcp open  nfs
+2121/tcp open  ccproxy-ftp
+3306/tcp open  mysql
+5432/tcp open  postgresql
+5900/tcp open  vnc
+6000/tcp open  X11
+6667/tcp open  irc
+8009/tcp open  ajp13
+8180/tcp open  unknown
+
+Nmap done: 1 IP address (1 host up) scanned in 1.66 seconds
+</code></pre>
+
+<h4 id="4242-network-sweeping"><a name="user-content-4242-network-sweeping" href="#4242-network-sweeping" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.2.4.2 - Network Sweeping</h4>
+<p>To deal with large volumes of hosts, or to otherwise try to conserve network traffic, we can attempt to probe these machines using <strong>Network Sweeping</strong> techniques. Network Sweeping is a term indicating a network wide action.</p>
+<pre><code>root@kali:~# nmap -sn 192.168.11.200-250
+</code></pre>
+
+<p>Searching for live machines using the <strong>grep</strong> command can give you autput that&rsquo;s difficult to manage. Instead, let&rsquo;s use Nmap&rsquo;s &ldquo;greppable&rdquo; output parameter (<strong>-oG</strong>) to save these results into a format that is easier to manage.</p>
+<pre><code>root@kali:~# nmap -v -sn 192.168.11.200-250 -oG ping-sweep.txt
+root@kali:~# grep Up ping-sweep.txt | cut -d &quot; &quot; -f 2
+</code></pre>
+
+<p>Additionally, we can sweep for specific TCP or UDP ports (<strong>-p</strong>) across the network, probing for common services and ports with services that may be useful, or otherwise have known vulnerabilities.</p>
+<pre><code>root@kali:~# nmap -p 80 192.168.0.200-250 -oG web-sweep.txt
+root@kali:~# grep open web-sweep.txt | cut -d &quot; &quot; -f 2
+</code></pre>
+
+<p>Using techniques such as these, we can scan across multiple IPs, probing for only a few common ports. In the command below, we are conducting a scan for the top 20 TCP ports.</p>
+<pre><code>root@kali:~# nmap -sT -A --top-ports=20 192.168.0.200-250 -oG top-ports-sweep.txt
+</code></pre>
+
+<p>Machines that prove to be rich in services, or otherwise interesting, would then be individually port scanned, using a more exhaustive port list.</p>
+<h3 id="425-os-fingerprinting"><a name="user-content-425-os-fingerprinting" href="#425-os-fingerprinting" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.2.5 - O.S Fingerprinting</h3>
+<p>Nmap has a built-in feature called <strong>OS Fingerprinting</strong> (<strong>-O</strong> parameter). This feature attempts to guss the underlying operating system, by inspecting the packets received from the target. The Nmap scanner will inspect the traffic sent and received from the target machine, and attempt to match the fingerprint to a know list.</p>
+<pre><code>root@kali:~# nmap -O 192.168.0.200
+                        ...
+Device type: general purpose
+Running: Linux 2.6.X
+OS CPE: cpe:/o:linux:linux_kernel:2.6
+OS details: Linux 2.6.9 - 2.6.33
+Network Distance: 1 hop
+                        ...
+</code></pre>
+
+<h3 id="426-banner-grabbingservice-enumeration"><a name="user-content-426-banner-grabbingservice-enumeration" href="#426-banner-grabbingservice-enumeration" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.2.6 - Banner Grabbing/Service Enumeration</h3>
+<p>Nmap can also help identify services on specific ports, by banner grabbing, and running several enumeration scripts (<strong>-sV</strong> and <strong>-A</strong> parameters).</p>
+<pre><code>root@kali:~# nmap -sV -sT 192.168.0.200
+
+Starting Nmap 7.01 ( https://nmap.org ) at 2018-03-11 10:15 -04
+Nmap scan report for 192.168.0.104
+Host is up (0.0017s latency).
+Not shown: 977 closed ports
+PORT     STATE SERVICE     VERSION
+21/tcp   open  ftp         vsftpd 2.3.4
+22/tcp   open  ssh         OpenSSH 4.7p1 Debian 8ubuntu1 (protocol 2.0)
+23/tcp   open  telnet      Linux telnetd
+25/tcp   open  smtp        Postfix smtpd
+53/tcp   open  domain      ISC BIND 9.4.2
+80/tcp   open  http        Apache httpd 2.2.8 ((Ubuntu) DAV/2)
+111/tcp  open  rpcbind     2 (RPC #100000)
+139/tcp  open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
+445/tcp  open  netbios-ssn Samba smbd 3.X (workgroup: WORKGROUP)
+512/tcp  open  exec        netkit-rsh rexecd
+513/tcp  open  login
+514/tcp  open  tcpwrapped
+1099/tcp open  rmiregistry GNU Classpath grmiregistry
+1524/tcp open  shell       Metasploitable root shell
+2049/tcp open  nfs         2-4 (RPC #100003)
+2121/tcp open  ftp         ProFTPD 1.3.1
+3306/tcp open  mysql       MySQL 5.0.51a-3ubuntu5
+5432/tcp open  postgresql  PostgreSQL DB 8.3.0 - 8.3.7
+5900/tcp open  vnc         VNC (protocol 3.3)
+6000/tcp open  X11         (access denied)
+6667/tcp open  irc         Unreal ircd
+8009/tcp open  ajp13       Apache Jserv (Protocol v1.3)
+8180/tcp open  http        Apache Tomcat/Coyote JSP engine 1.1
+Service Info: Hosts:  metasploitable.localdomain, localhost, irc.Metasploitable.LAN; OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 15.46 seconds
+</code></pre>
+
+<h3 id="427-nmap-scripting-engine-nse"><a name="user-content-427-nmap-scripting-engine-nse" href="#427-nmap-scripting-engine-nse" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.2.7 - Nmap Scripting Engine (NSE)</h3>
+<p>The Nmap Scripting Engine (NSE) is a recent addition to Nmap, wich allows users to write simple scripts, in order to automate various networking tasks. The scripts include a broad range of utilities, form DNS enumeration scripts, brute force attack scripts, and even vulnerability identification scripts.<br />
+All NSE scripts can be found in the <strong>/usr/share/nmap/scripts</strong> directory.</p>
+<pre><code>root@kali:~# ls /usr/share/nmap/scripts/
+acarsd-info.nse                         ike-version.nse
+address-info.nse                        imap-brute.nse
+afp-brute.nse                           imap-capabilities.nse
+afp-ls.nse                              informix-brute.nse
+afp-path-vuln.nse                       informix-query.nse
+afp-serverinfo.nse                      informix-tables.nse
+afp-showmount.nse                       ip-forwarding.nse
+ajp-auth.nse                            ip-geolocation-geobytes.nse
+ajp-brute.nse                           ip-geolocation-geoplugin.nse
+ajp-headers.nse                         ip-geolocation-ipinfodb.nse
+ajp-methods.nse                         ip-geolocation-maxmind.nse
+ajp-request.nse                         ip-https-discover.nse
+allseeingeye-info.nse                   ipidseq.nse
+amqp-info.nse                           ipv6-node-info.nse
+asn-query.nse                           ipv6-ra-flood.nse
+auth-owners.nse                         irc-botnet-channels.nse
+auth-spoof.nse                          irc-brute.nse
+backorifice-brute.nse                   irc-info.nse
+backorifice-info.nse                    irc-sasl-brute.nse
+bacnet-info.nse                         irc-unrealircd-backdoor.nse
+banner.nse                              iscsi-brute.nse
+bitcoin-getaddr.nse                     iscsi-info.nse
+bitcoin-info.nse                        isns-info.nse
+bitcoinrpc-info.nse                     jdwp-exec.nse
+bittorrent-discovery.nse                jdwp-info.nse
+bjnp-discover.nse                       jdwp-inject.nse
+broadcast-ataoe-discover.nse            jdwp-version.nse
+broadcast-avahi-dos.nse                 knx-gateway-discover.nse
+broadcast-bjnp-discover.nse             knx-gateway-info.nse
+broadcast-db2-discover.nse              krb5-enum-users.nse
+broadcast-dhcp6-discover.nse            ldap-brute.nse
+broadcast-dhcp-discover.nse             ldap-novell-getpass.nse
+broadcast-dns-service-discovery.nse     ldap-rootdse.nse
+broadcast-dropbox-listener.nse          ldap-search.nse
+broadcast-eigrp-discovery.nse           lexmark-config.nse
+broadcast-igmp-discovery.nse            llmnr-resolve.nse
+broadcast-listener.nse                  lltd-discovery.nse
+broadcast-ms-sql-discover.nse           maxdb-info.nse
+broadcast-netbios-master-browser.nse    mcafee-epo-agent.nse
+broadcast-networker-discover.nse        membase-brute.nse
+broadcast-novell-locate.nse             membase-http-info.nse
+broadcast-pc-anywhere.nse               memcached-info.nse
+broadcast-pc-duo.nse                    metasploit-info.nse
+broadcast-pim-discovery.nse             metasploit-msgrpc-brute.nse
+broadcast-ping.nse                      metasploit-xmlrpc-brute.nse
+broadcast-pppoe-discover.nse            mikrotik-routeros-brute.nse
+broadcast-rip-discover.nse              mmouse-brute.nse
+broadcast-ripng-discover.nse            mmouse-exec.nse
+broadcast-sonicwall-discover.nse        modbus-discover.nse
+broadcast-sybase-asa-discover.nse       mongodb-brute.nse
+broadcast-tellstick-discover.nse        mongodb-databases.nse
+broadcast-upnp-info.nse                 mongodb-info.nse
+broadcast-versant-locate.nse            mrinfo.nse
+broadcast-wake-on-lan.nse               msrpc-enum.nse
+broadcast-wpad-discover.nse             ms-sql-brute.nse
+broadcast-wsdd-discover.nse             ms-sql-config.nse
+broadcast-xdmcp-discover.nse            ms-sql-dac.nse
+cassandra-brute.nse                     ms-sql-dump-hashes.nse
+cassandra-info.nse                      ms-sql-empty-password.nse
+cccam-version.nse                       ms-sql-hasdbaccess.nse
+citrix-brute-xml.nse                    ms-sql-info.nse
+citrix-enum-apps.nse                    ms-sql-query.nse
+citrix-enum-apps-xml.nse                ms-sql-tables.nse
+citrix-enum-servers.nse                 ms-sql-xp-cmdshell.nse
+citrix-enum-servers-xml.nse             mtrace.nse
+couchdb-databases.nse                   murmur-version.nse
+couchdb-stats.nse                       mysql-audit.nse
+creds-summary.nse                       mysql-brute.nse
+cups-info.nse                           mysql-databases.nse
+cups-queue-info.nse                     mysql-dump-hashes.nse
+cvs-brute.nse                           mysql-empty-password.nse
+cvs-brute-repository.nse                mysql-enum.nse
+daap-get-library.nse                    mysql-info.nse
+daytime.nse                             mysql-query.nse
+db2-das-info.nse                        mysql-users.nse
+dhcp-discover.nse                       mysql-variables.nse
+dict-info.nse                           mysql-vuln-cve2012-2122.nse
+distcc-cve2004-2687.nse                 nat-pmp-info.nse
+dns-blacklist.nse                       nat-pmp-mapport.nse
+dns-brute.nse                           nbstat.nse
+dns-cache-snoop.nse                     ncp-enum-users.nse
+dns-check-zone.nse                      ncp-serverinfo.nse
+dns-client-subnet-scan.nse              ndmp-fs-info.nse
+dns-fuzz.nse                            ndmp-version.nse
+dns-ip6-arpa-scan.nse                   nessus-brute.nse
+dns-nsec3-enum.nse                      nessus-xmlrpc-brute.nse
+dns-nsec-enum.nse                       netbus-auth-bypass.nse
+dns-nsid.nse                            netbus-brute.nse
+dns-random-srcport.nse                  netbus-info.nse
+dns-random-txid.nse                     netbus-version.nse
+dns-recursion.nse                       nexpose-brute.nse
+dns-service-discovery.nse               nfs-ls.nse
+dns-srv-enum.nse                        nfs-showmount.nse
+dns-update.nse                          nfs-statfs.nse
+dns-zeustracker.nse                     nje-node-brute.nse
+dns-zone-transfer.nse                   nping-brute.nse
+docker-version.nse                      nrpe-enum.nse
+domcon-brute.nse                        ntp-info.nse
+domcon-cmd.nse                          ntp-monlist.nse
+domino-enum-users.nse                   omp2-brute.nse
+dpap-brute.nse                          omp2-enum-targets.nse
+drda-brute.nse                          omron-info.nse
+drda-info.nse                           openlookup-info.nse
+duplicates.nse                          openvas-otp-brute.nse
+eap-info.nse                            oracle-brute.nse
+enip-info.nse                           oracle-brute-stealth.nse
+epmd-info.nse                           oracle-enum-users.nse
+eppc-enum-processes.nse                 oracle-sid-brute.nse
+fcrdns.nse                              ovs-agent-version.nse
+finger.nse                              p2p-conficker.nse
+firewalk.nse                            path-mtu.nse
+firewall-bypass.nse                     pcanywhere-brute.nse
+flume-master-info.nse                   pgsql-brute.nse
+freelancer-info.nse                     pjl-ready-message.nse
+ftp-anon.nse                            pop3-brute.nse
+ftp-bounce.nse                          pop3-capabilities.nse
+ftp-brute.nse                           pptp-version.nse
+ftp-libopie.nse                         qconn-exec.nse
+ftp-proftpd-backdoor.nse                qscan.nse
+ftp-vsftpd-backdoor.nse                 quake1-info.nse
+ftp-vuln-cve2010-4221.nse               quake3-info.nse
+ganglia-info.nse                        quake3-master-getservers.nse
+giop-info.nse                           rdp-enum-encryption.nse
+gkrellm-info.nse                        rdp-vuln-ms12-020.nse
+gopher-ls.nse                           realvnc-auth-bypass.nse
+gpsd-info.nse                           redis-brute.nse
+hadoop-datanode-info.nse                redis-info.nse
+hadoop-jobtracker-info.nse              resolveall.nse
+hadoop-namenode-info.nse                reverse-index.nse
+hadoop-secondary-namenode-info.nse      rexec-brute.nse
+hadoop-tasktracker-info.nse             rfc868-time.nse
+hbase-master-info.nse                   riak-http-info.nse
+hbase-region-info.nse                   rlogin-brute.nse
+hddtemp-info.nse                        rmi-dumpregistry.nse
+hnap-info.nse                           rmi-vuln-classloader.nse
+hostmap-bfk.nse                         rpcap-brute.nse
+hostmap-ip2hosts.nse                    rpcap-info.nse
+hostmap-robtex.nse                      rpc-grind.nse
+http-adobe-coldfusion-apsa1301.nse      rpcinfo.nse
+http-affiliate-id.nse                   rsync-brute.nse
+http-apache-negotiation.nse             rsync-list-modules.nse
+http-auth-finder.nse                    rtsp-methods.nse
+http-auth.nse                           rtsp-url-brute.nse
+http-avaya-ipoffice-users.nse           s7-info.nse
+http-awstatstotals-exec.nse             samba-vuln-cve-2012-1182.nse
+http-axis2-dir-traversal.nse            script.db
+http-backup-finder.nse                  servicetags.nse
+http-barracuda-dir-traversal.nse        sip-brute.nse
+http-brute.nse                          sip-call-spoof.nse
+http-cakephp-version.nse                sip-enum-users.nse
+http-chrono.nse                         sip-methods.nse
+http-cisco-anyconnect.nse               skypev2-version.nse
+http-coldfusion-subzero.nse             smb-brute.nse
+http-comments-displayer.nse             smb-enum-domains.nse
+http-config-backup.nse                  smb-enum-groups.nse
+http-cors.nse                           smb-enum-processes.nse
+http-cross-domain-policy.nse            smb-enum-sessions.nse
+http-csrf.nse                           smb-enum-shares.nse
+http-date.nse                           smb-enum-users.nse
+http-default-accounts.nse               smb-flood.nse
+http-devframework.nse                   smb-ls.nse
+http-dlink-backdoor.nse                 smb-mbenum.nse
+http-dombased-xss.nse                   smb-os-discovery.nse
+http-domino-enum-passwords.nse          smb-print-text.nse
+http-drupal-enum.nse                    smb-psexec.nse
+http-drupal-enum-users.nse              smb-security-mode.nse
+http-enum.nse                           smb-server-stats.nse
+http-errors.nse                         smb-system-info.nse
+http-exif-spider.nse                    smbv2-enabled.nse
+http-favicon.nse                        smb-vuln-conficker.nse
+http-feed.nse                           smb-vuln-cve2009-3103.nse
+http-fetch.nse                          smb-vuln-ms06-025.nse
+http-fileupload-exploiter.nse           smb-vuln-ms07-029.nse
+http-form-brute.nse                     smb-vuln-ms08-067.nse
+http-form-fuzzer.nse                    smb-vuln-ms10-054.nse
+http-frontpage-login.nse                smb-vuln-ms10-061.nse
+http-generator.nse                      smb-vuln-regsvc-dos.nse
+http-git.nse                            smtp-brute.nse
+http-gitweb-projects-enum.nse           smtp-commands.nse
+http-google-malware.nse                 smtp-enum-users.nse
+http-grep.nse                           smtp-open-relay.nse
+http-headers.nse                        smtp-strangeport.nse
+http-huawei-hg5xx-vuln.nse              smtp-vuln-cve2010-4344.nse
+http-icloud-findmyiphone.nse            smtp-vuln-cve2011-1720.nse
+http-icloud-sendmsg.nse                 smtp-vuln-cve2011-1764.nse
+http-iis-short-name-brute.nse           sniffer-detect.nse
+http-iis-webdav-vuln.nse                snmp-brute.nse
+http-joomla-brute.nse                   snmp-hh3c-logins.nse
+http-litespeed-sourcecode-download.nse  snmp-info.nse
+http-ls.nse                             snmp-interfaces.nse
+http-majordomo2-dir-traversal.nse       snmp-ios-config.nse
+http-malware-host.nse                   snmp-netstat.nse
+http-methods.nse                        snmp-processes.nse
+http-method-tamper.nse                  snmp-sysdescr.nse
+http-mobileversion-checker.nse          snmp-win32-services.nse
+http-ntlm-info.nse                      snmp-win32-shares.nse
+http-open-proxy.nse                     snmp-win32-software.nse
+http-open-redirect.nse                  snmp-win32-users.nse
+http-passwd.nse                         socks-auth-info.nse
+http-phpmyadmin-dir-traversal.nse       socks-brute.nse
+http-phpself-xss.nse                    socks-open-proxy.nse
+http-php-version.nse                    ssh2-enum-algos.nse
+http-proxy-brute.nse                    ssh-hostkey.nse
+http-put.nse                            sshv1.nse
+http-qnap-nas-info.nse                  ssl-ccs-injection.nse
+http-referer-checker.nse                ssl-cert.nse
+http-rfi-spider.nse                     ssl-date.nse
+http-robots.txt.nse                     ssl-dh-params.nse
+http-robtex-reverse-ip.nse              ssl-enum-ciphers.nse
+http-robtex-shared-ns.nse               ssl-google-cert-catalog.nse
+http-server-header.nse                  ssl-heartbleed.nse
+http-shellshock.nse                     ssl-known-key.nse
+http-sitemap-generator.nse              ssl-poodle.nse
+http-slowloris-check.nse                sslv2.nse
+http-slowloris.nse                      sstp-discover.nse
+http-sql-injection.nse                  stun-info.nse
+http-stored-xss.nse                     stun-version.nse
+http-svn-enum.nse                       stuxnet-detect.nse
+http-svn-info.nse                       supermicro-ipmi-conf.nse
+http-title.nse                          svn-brute.nse
+http-tplink-dir-traversal.nse           targets-asn.nse
+http-trace.nse                          targets-ipv6-map4to6.nse
+http-traceroute.nse                     targets-ipv6-multicast-echo.nse
+http-unsafe-output-escaping.nse         targets-ipv6-multicast-invalid-dst.nse
+http-useragent-tester.nse               targets-ipv6-multicast-mld.nse
+http-userdir-enum.nse                   targets-ipv6-multicast-slaac.nse
+http-vhosts.nse                         targets-ipv6-wordlist.nse
+http-virustotal.nse                     targets-sniffer.nse
+http-vlcstreamer-ls.nse                 targets-traceroute.nse
+http-vmware-path-vuln.nse               targets-xml.nse
+http-vuln-cve2006-3392.nse              teamspeak2-version.nse
+http-vuln-cve2009-3960.nse              telnet-brute.nse
+http-vuln-cve2010-0738.nse              telnet-encryption.nse
+http-vuln-cve2010-2861.nse              tftp-enum.nse
+http-vuln-cve2011-3192.nse              tls-nextprotoneg.nse
+http-vuln-cve2011-3368.nse              tor-consensus-checker.nse
+http-vuln-cve2012-1823.nse              traceroute-geolocation.nse
+http-vuln-cve2013-0156.nse              unittest.nse
+http-vuln-cve2013-7091.nse              unusual-port.nse
+http-vuln-cve2014-2126.nse              upnp-info.nse
+http-vuln-cve2014-2127.nse              url-snarf.nse
+http-vuln-cve2014-2128.nse              ventrilo-info.nse
+http-vuln-cve2014-2129.nse              versant-info.nse
+http-vuln-cve2014-8877.nse              vmauthd-brute.nse
+http-vuln-cve2015-1427.nse              vnc-brute.nse
+http-vuln-cve2015-1635.nse              vnc-info.nse
+http-vuln-misfortune-cookie.nse         voldemort-info.nse
+http-vuln-wnr1000-creds.nse             vuze-dht-info.nse
+http-waf-detect.nse                     wdb-version.nse
+http-waf-fingerprint.nse                weblogic-t3-info.nse
+http-webdav-scan.nse                    whois-domain.nse
+http-wordpress-brute.nse                whois-ip.nse
+http-wordpress-enum.nse                 wsdd-discover.nse
+http-wordpress-users.nse                x11-access.nse
+http-xssed.nse                          xdmcp-discover.nse
+iax2-brute.nse                          xmlrpc-methods.nse
+iax2-version.nse                        xmpp-brute.nse
+icap-info.nse                           xmpp-info.nse
+</code></pre>
+
+<p>One such script is <strong>smb-os-discovery</strong>, which attempts to connect to the SMB service on a target system, and determine its operating system version.</p>
+<pre><code>root@kali:~# nmap 192.168.0.104 --script smb-os-discovery.nse
+Host script results:
+| smb-os-discovery: 
+|   OS: Unix (Samba 3.0.20-Debian)
+|   NetBIOS computer name: 
+|   Workgroup: WORKGROUP
+|_  System time: 2018-02-16T22:23:16-05:00
+
+Nmap done: 1 IP address (1 host up) scanned in 2.50 seconds
+</code></pre>
+
+<p>Another useful script is the DNS zone transfer NSE script, wich can be invoked in the following way:</p>
+<pre><code>root@kali:~# nmap --script=dns-zone-transfer -p 53 ns2.example.com
+</code></pre>
+
+<h3 id="428-exericies"><a name="user-content-428-exericies" href="#428-exericies" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.2.8 - Exericies</h3>
+<ol>
+<li>Use <strong>nmap</strong> to conduct a ping sweep for your target IP range and save the output to a file, so that you can grep for hosts that are online.</li>
+</ol>
+<pre><code>root@kali:~# nmap -sn 192.168.0.1-150 -oG ping-sweep.txt
+root@kali:~# grep Up ping-sweep.txt | cut -d&quot; &quot; -f2 &gt;&gt; hosts.txt
+</code></pre>
+
+<ol>
+<li>Scan the IPs you found in exercise 1 for open webserver ports. Use <strong>nmap</strong> to find the web sever and operating system version.</li>
+</ol>
+<pre><code>root@kali:~# sudo nmap -iL hosts.txt -p 80 -O
+[sudo] password for zero: 
+
+Starting Nmap 7.01 ( https://nmap.org ) at 2018-03-11 10:32 -04
+Nmap scan report for 192.168.0.1
+Host is up (0.0053s latency).
+PORT   STATE SERVICE
+80/tcp open  http
+MAC Address: C8:3A:35:4D:3A:78 (Tenda Technology)
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Device type: general purpose
+Running: Wind River VxWorks
+OS CPE: cpe:/o:windriver:vxworks
+OS details: VxWorks
+Network Distance: 1 hop
+
+Nmap scan report for 192.168.0.104
+Host is up (0.00024s latency).
+PORT   STATE SERVICE
+80/tcp open  http
+MAC Address: 08:00:27:3B:13:69 (Oracle VirtualBox virtual NIC)
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Device type: general purpose
+Running: Linux 2.6.X
+OS CPE: cpe:/o:linux:linux_kernel:2.6
+OS details: Linux 2.6.9 - 2.6.33
+Network Distance: 1 hop
+
+Nmap scan report for 192.168.0.105
+Host is up (0.000046s latency).
+PORT   STATE  SERVICE
+80/tcp closed http
+Warning: OSScan results may be unreliable because we could not find at least 1 open and 1 closed port
+Device type: general purpose
+Running: Linux 2.6.X
+OS CPE: cpe:/o:linux:linux_kernel:2.6
+OS details: Linux 2.6.14 - 2.6.34, Linux 2.6.17, Linux 2.6.17 (Mandriva)
+Network Distance: 0 hops
+
+OS detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 4 IP addresses (3 hosts up) scanned in 7.90 seconds
+
+</code></pre>
+
+<ol>
+<li>Use the NSE scripts to scan the servers in the labs wich are running the SMB service.</li>
+</ol>
+<pre><code>root@kali:~# nmap -v -Pn --script smb-* 192.168.0.104
+</code></pre>
+
+<ol>
+<li>Explore the various command line options that nmap offers while scanning an online host you discovered within your target IP range. Monitor the bandwidth usage changes for the different options. Weigh the use of collecting as much informations possible against the resources it takes to gather it.</li>
+</ol>
+<p><a href="#">nmap-cheat-sheet</a></p>
+<h2 id="43-smb-enumeration"><a name="user-content-43-smb-enumeration" href="#43-smb-enumeration" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.3 - SMB Enumeration</h2>
+<h5 id="smb-wiki"><a href="https://en.wikipedia.org/wiki/Server_Message_Block">SMB wiki</a></h5>
+<p>The Server Message Block (SMB) protocol&rsquo;s security track record has been poor for over a decade, due to its complex implementation, and open nature. From unauthenticated SMB null sessions in Windows 2000 and XP, to a plethora of SMB bugs and vulnerabilities over the years, SMB has seen its fair share of action.</p>
+<ul>
+<li>SMB version numbers, and their related Windows Operating system versions:<ul>
+<li><strong>SMB1</strong> - Windows 2000, XP and Windows 2003</li>
+<li><strong>SMB2</strong> - Windows Vista SP1 and Windows 2008</li>
+<li><strong>SMB2.1</strong> - Windows 7 and Windows 2008 R2</li>
+<li><strong>SMB3</strong> - Windows 8 and Windows 2012</li>
+</ul>
+</li>
+</ul>
+<h3 id="431-scanning-for-the-netbios-service"><a name="user-content-431-scanning-for-the-netbios-service" href="#431-scanning-for-the-netbios-service" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.3.1 - Scanning for the NetBIOS Service</h3>
+<h5 id="netbios-wiki"><a href="https://en.wikipedia.org/wiki/NetBIOS">NetBIOS wiki</a></h5>
+<p>The SMB NetBIOS service listens on TCP ports 139 and 445, as well as several UDP ports. These can be scanned with tools, such as <strong>nmap</strong>, using syntax similar to the following:</p>
+<pre><code>root@kali:~# nmap -v -p 138,445 -oG smb.txt 192.168.11.200-254
+</code></pre>
+
+<p>There are other, more specialized, tools for specifically identifying NetBIOS information, such as <strong>nbtscan</strong> as shown below.</p>
+<pre><code>root@kali:~# nbtscan -r 192.168.11.0/24
+</code></pre>
+
+<h2 id="432-null-session-enumeration"><a name="user-content-432-null-session-enumeration" href="#432-null-session-enumeration" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.3.2 - Null Session Enumeration</h2>
+<h5 id="enum4linux"><a href="https://tools.kali.org/information-gathering/enum4linux">enum4linux</a></h5>
+<p>A null session refers to an unauthenticated NetBIOS session betwee two computers. This feature exists to allow unauthenticated machines to obtain browse lists from other Microsoft servers. A null session also allows unauthenticated hackers to obtain large amounts of information about the machine, such as password polices, usernames, group names, machine names, user and host SIDs.<br />
+A useful tool for this is <strong>enum4linux</strong>, present in Kali. It is written in Perl and is basically a wrapper around the <a href="http://www.samba.org/">Samba</a> tools <strong>smbclient</strong>, <strong>rpcclient</strong>, <strong>net</strong> and <strong>nmblookup</strong>.</p>
+<pre><code>root@kali:~# enum4linux -a 192.168.11.227
+</code></pre>
+
+<h6 id="for-more-information-about-enum4linux-check-out-the-examples-available-on-the-portcullis-labs-website"><a name="user-content-for-more-information-about-enum4linux-check-out-the-examples-available-on-the-portcullis-labs-website" href="#for-more-information-about-enum4linux-check-out-the-examples-available-on-the-portcullis-labs-website" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>For more information about <strong>enum4linux</strong>, check out the examples available on the <a href="http://labs.portcullis.co.uk/tools/enum4linux/">Portcullis Labs website</a></h6>
+<h3 id="433-nmap-smb-nse-scripts"><a name="user-content-433-nmap-smb-nse-scripts" href="#433-nmap-smb-nse-scripts" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.3.3 - Nmap SMB NSE Scripts</h3>
+<h5 id="nse-scripts"><a href="https://nmap.org/nsedoc/">NSE scripts</a></h5>
+<p>Nmap contains many useful NSE scripts that can be used to discover and enumerate SMB services. These scripts can be found in the <strong>/usr/share/nmap/scripts</strong> directory.</p>
+<pre><code>root@kali:~# ls /usr/share/nmap/scripts/smb*
+/usr/share/nmap/scripts/smb-brute.nse
+/usr/share/nmap/scripts/smb-enum-domains.nse
+/usr/share/nmap/scripts/smb-enum-groups.nse
+/usr/share/nmap/scripts/smb-enum-processes.nse
+/usr/share/nmap/scripts/smb-enum-sessions.nse
+/usr/share/nmap/scripts/smb-enum-shares.nse
+/usr/share/nmap/scripts/smb-enum-users.nse
+/usr/share/nmap/scripts/smb-flood.nse
+/usr/share/nmap/scripts/smb-ls.nse
+/usr/share/nmap/scripts/smb-mbenum.nse
+/usr/share/nmap/scripts/smb-os-discovery.nse
+/usr/share/nmap/scripts/smb-print-text.nse
+/usr/share/nmap/scripts/smb-psexec.nse
+/usr/share/nmap/scripts/smb-security-mode.nse
+/usr/share/nmap/scripts/smb-server-stats.nse
+/usr/share/nmap/scripts/smb-system-info.nse
+/usr/share/nmap/scripts/smbv2-enabled.nse
+/usr/share/nmap/scripts/smb-vuln-conficker.nse
+/usr/share/nmap/scripts/smb-vuln-cve2009-3103.nse
+/usr/share/nmap/scripts/smb-vuln-ms06-025.nse
+/usr/share/nmap/scripts/smb-vuln-ms07-029.nse
+/usr/share/nmap/scripts/smb-vuln-ms08-067.nse
+/usr/share/nmap/scripts/smb-vuln-ms10-054.nse
+/usr/share/nmap/scripts/smb-vuln-ms10-061.nse
+/usr/share/nmap/scripts/smb-vuln-regsvc-dos.nse
+</code></pre>
+
+<p>We can see thtat several interesting Nmap SMB NSE scripts exist, such as OS discovery and enumeration of various pieces of information from the protocol.</p>
+<pre><code>root@kali:~# nmap -v -p 139, 445 --script=smb-os-discovery 192.168.11.227
+</code></pre>
+
+<p>To check for known SMB protocol vulnerabilities, you can invoke the <strong>nmap</strong> <b><em>smb-check-vulns</em></b> script as shown below.</p>
+<pre><code>root@kali:~# nmap -v -p 139,445 --script=smb-check-vulns --script-args=unasafe=1 192.168.11.201
+</code></pre>
+
+<p>In this case, <strong>nmap</strong> identifies that the specific SMB service is missing at least one critical patch for the <a href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2008/ms08-067">MS08-067</a> vulnerability.</p>
+<h3 id="434-exercises"><a name="user-content-434-exercises" href="#434-exercises" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.3.4 - Exercises</h3>
+<ol>
+<li>
+<p>Use Nmap to make a list of which SMB servers in the lab are running Windows.</p>
+</li>
+<li>
+<p>Use NSE scripts to scan these systems for SMB vulnerabilities.</p>
+</li>
+</ol>
+<pre><code>root@kali:~# nmap -v -p 139,445 --script=smb-check-vulns --script-args=unasafe=1 192.168.11.201
+</code></pre>
+
+<ol>
+<li>Use <strong>nbtscan</strong> and <strong>enum4linux</strong> against these systems and identify the kinds of data you can obtain from different versions of Windows.</li>
+</ol>
+<h2 id="44-smtp-enumeration"><a name="user-content-44-smtp-enumeration" href="#44-smtp-enumeration" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.4 - SMTP Enumeration</h2>
+<h5 id="smtp"><a href="https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol">SMTP</a></h5>
+<p>In certain vulnerable configurations, mail servers can also be used to gather information about a host or network. SMTP supports several important commands, such as <strong>VRFY</strong> and <strong>EXPN</strong>. A <strong>VRFY</strong> request asks the server to verify an email address, while <strong>EXPN</strong> asks the server for the membership of a mailing list.</p>
+<p>Example:</p>
+<pre><code>root@kali:~# nc -nv 192.168.0.104 25
+Connection to 192.168.0.104 25 port [tcp/*] succeeded!
+220 metasploitable.localdomain ESMTP Postfix (Ubuntu)
+VRFY root
+252 2.0.0 root
+VRFY idontexist
+550 5.1.1 &lt;idontexist&gt;: Recipient address rejected: User unknown in local recipient table
+</code></pre>
+
+<p>Notice the difference in the message received when a user is present on the system. The SMTP server happily verifies that the user exists. This procedure can be used to help guess valid usernames.</p>
+<p><a href="#">smtp-vrfy.py</a></p>
+<h3 id="441-exercise"><a name="user-content-441-exercise" href="#441-exercise" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.4.1 - Exercise</h3>
+<ol>
+<li>Search your target network range, and see if you can identify any systems that respond to the SMTP <em>VRFY</em> command.</li>
+</ol>
+<h2 id="45-snmp-enumeration"><a name="user-content-45-snmp-enumeration" href="#45-snmp-enumeration" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.5 - SNMP Enumeration</h2>
+<h5 id="snmp"><a href="https://en.wikipedia.org/wiki/Simple_Network_Management_Protocol">SNMP</a></h5>
+<p>Over the years, we have often found that Simple Network Management Protocol (SNMP) is a poorly understood protocol by many network administrators. This often results in SNMP misconfigurations, which can result in a dramatic information leakage. SNMP is based on UDP, a simple, stateless protocol, and is therefore susceptible to IP spoofing, and replay attacks. In a addition, the commonly used SNMP protocols 1, 2 and 2c offer no traffic encryption, meaning SNMP information and credentials can be easily intercepted over a local network. Traditional SNMP protocols also have weak authentication schemes, and are commonly left configured with default public and private community strings.<br />
+<br><br />
+Now, consider that all of the above applies to a protocol, which by definition is meant to &ldquo;Manege the Network&rdquo;.</p>
+<h3 id="451-mib-tree"><a name="user-content-451-mib-tree" href="#451-mib-tree" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.5.1 - MIB Tree</h3>
+<p>The SNMP Management Information Base (<a href="https://en.wikipedia.org/wiki/Management_information_base">MIB</a>) is a databse containing information usually related to network management. The database is organized like a tree, where branches represent different organizations or network functions. The leaves of the tree (final endpoints) correspond to specific variable values that can then be accessed, and probed, by an external user.</p>
+<p>For example, the following MIB values corresponf to specific Microsoft Windows SNMP parameters.</p>
+<table>
+<thead>
+<tr>
+<th>-</th>
+<th>-</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.3.6.1.2.1.25.1.6.0</td>
+<td>System Processes</td>
+</tr>
+<tr>
+<td>1.3.6.1.2.1.25.4.2.1.2</td>
+<td>Running Programs</td>
+</tr>
+<tr>
+<td>1.3.6.1.2.1.25.4.2.1.4</td>
+<td>Processes Path</td>
+</tr>
+<tr>
+<td>1.3.6.1.2.1.25.2.3.1.4</td>
+<td>Storage Units</td>
+</tr>
+<tr>
+<td>1.3.6.1.2.1.25.6.3.1.2</td>
+<td>Software Name</td>
+</tr>
+<tr>
+<td>1.3.6.1.4.1.77.1.2.25</td>
+<td>User Accounts</td>
+</tr>
+<tr>
+<td>1.3.6.1.2.1.6.13.1.3</td>
+<td>TCP Local Ports</td>
+</tr>
+</tbody>
+</table>
+<h3 id="452-scanning-for-snmp"><a name="user-content-452-scanning-for-snmp" href="#452-scanning-for-snmp" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.5.2 - Scanning for SNMP</h3>
+<p>To scan open SNMP ports, we can use <strong>nmap</strong> with syntax similar to:</p>
+<pre><code>root@kali:~# nmap -sU --open -p 161 192.168.11.200-254 -oG mega-snmp.txt
+</code></pre>
+
+<p>Alternatively, we can use a toll such as <strong>onesixtyone</strong>, wich will check for given community strings against an IP list, allowing us to brute force various community strings.</p>
+<pre><code>root@kali:~# echo public &gt; community
+root@kali:~# echo private &gt;&gt; community
+root@kali:~# echo manager &gt;&gt; community
+root@kali:~# for ip in $(seq 200 254);do echo 192.168.11.$ip;done &gt; ips
+root@kali:~# onesixtyone -c community -i ips
+</code></pre>
+
+<p>Once these SNMP services are found, we can start querying them for specific MIB data that misght be interesting to us.</p>
+<h3 id="453-windows-snmp-enumeration-example"><a name="user-content-453-windows-snmp-enumeration-example" href="#453-windows-snmp-enumeration-example" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>4.5.3 - Windows SNMP Enumeration Example</h3>
+<p>We can probe and query SNMP values using a tool such as <strong>snmpwalk</strong> provide we at least know the SNMP read-only community string, wich in most cases is &ldquo;<b><em>public</em></b>&ldquo;. Using some of the MIB values provided above, we could attemp to enumerate their corresponding values.</p>
+<h4 id="enumerating-the-entire-mib-tree"><a name="user-content-enumerating-the-entire-mib-tree" href="#enumerating-the-entire-mib-tree" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Enumerating the Entire MIB Tree:</h4>
+<pre><code>root@kali:~# snmpwalk -c public -v1 192.168.11.204 1.3.6.1.4.1.77.1.2.25
+</code></pre>
+
+<h4 id="enumerating-windows-users"><a name="user-content-enumerating-windows-users" href="#enumerating-windows-users" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Enumerating Windows Users:</h4>
+<pre><code>root@kali:~# snmpwalk -c public -v1 192.168.11.204 1.3.6.1.2.1.25.4.2.1.2
+</code></pre>
+
+<h4 id="enumerating"><a name="user-content-enumerating" href="#enumerating" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Enumerating</h4>
+<pre><code>root@kali:~# snmpwalk -c public -v1 192.168.11.204
+</code></pre>
+
+<h4 id="enumerating_1"><a name="user-content-enumerating_1" href="#enumerating_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Enumerating</h4>
+<pre><code>root@kali:~# snmpwalk -c public -v1 192.168.11.204 
+</code></pre></article></body></html>
