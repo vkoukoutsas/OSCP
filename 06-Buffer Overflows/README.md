@@ -30,4 +30,38 @@ The SLMail software was not compiled with **Data Execution Prevention ([DEP](htt
 
 Earlier, we saw an example of this when we conversed with a POP3 server using **netcat**. To reproduce the netcat connection usage performed earlier in the course using a Python script.
 
-##### [connect.py]()
+##### [connect.py](https://github.com/cdojo/OSCP/blob/master/06-Buffer%20Overflows/scripts/slmail/connect.py)
+
+Taking this simple script and modifying it to fuzz the password field during the login process is easy.
+
+##### [fuzzer.py](https://github.com/cdojo/OSCP/blob/master/06-Buffer%20Overflows/scripts/slmail/fuzzer.py)
+
+Running this script against your SLMail instance.
+
+```
+root@kali:~# ./fuzzer.py 10.0.0.1
+Fuzzing PASS with 1 bytes
+					...
+Fuzzing PASS with 2700 bytes
+Fuzzing PASS with 2900 bytes
+```
+
+When our **PASS** buffer reaches approximately 2700 bytes in length, the debugger presents us with the following information.
+
+![Execution Halted in OllyDbg](https://preview.ibb.co/jwKeN7/im_dbg.png)
+
+###### Execution Halted in OllyDbg
+
+The screenshot suggests that the Extended Instruction Pointer (**[EIP](http://en.wikipedia.org/wiki/EIP_register#32-­bit)**) register has been overwritten with our input buffer of *A*'s (**\x41** in hex). This is of particular interest to us, as the EIP register also controls the execution flw of the application. This means that if we craft our exploit buffer carefully, we mught be able to divert the execution of the program to a place of our choosing, such as a into the memory were we can introduce some recever shell code, as part of our buffer.
+
+One other Address worth noting in this specific window, is the value of the Extended Stack Pointer (**[ESP](https://en.wikipedia.org/wiki/Stack_register)**)
+
+## Exercicies
+
+1. Fuzz SLMail and replicate the crash.
+
+> [fuzzer.py](https://github.com/cdojo/OSCP/blob/master/06-Buffer%20Overflows/scripts/slmail/fuzzer.py)
+
+2. Examine the memory in the stack, when SLMail crashes. What does it look like? Consider how this might be useful.
+
+> ...
