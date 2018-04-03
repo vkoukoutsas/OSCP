@@ -87,7 +87,7 @@ Penetration Testing with Kali Linux may qualify you for 40 ISC2 CPE Credits. Thi
 
 #### Training Program
 
-
+* [Kali Training](https://kali.training/)
 * [Shellter Labs](https://shellterlabs.com/en/)
 * [Pentestit](https://lab.pentestit.ru/)
 * [Hack The Box](https://www.hackthebox.eu/)
