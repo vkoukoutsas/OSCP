@@ -64,6 +64,7 @@ Penetration Testing with Kali Linux may qualify you for 40 ISC2 CPE Credits. Thi
 
 ### Books
 
+* [Kali Linux Revealed](https://kali.training/downloads/Kali-Linux-Revealed-1st-edition.pdf)
 * Hacking: The Art of Exploitation, 2nd Edition [link](https://www.amazon.com/Hacking-Art-Exploitation-Jon-Erickson/dp/1593271441/ref=sr_1_1?ie=UTF8&qid=1492297164&sr=8-1&keywords=hacking)
 * Rtfm: Red Team Field Manual [link](https://www.amazon.com/Rtfm-Red-Team-Field-Manual/dp/1494295504/ref=sr_1_2?ie=UTF8&qid=1492297153&sr=8-2&keywords=pentest)
 * Offensive Security Certified Professional [link](https://www.amazon.co.uk/Offensive-Security-Certified-Professional-Russell/dp/B007OQ06LQ)
@@ -86,6 +87,7 @@ Penetration Testing with Kali Linux may qualify you for 40 ISC2 CPE Credits. Thi
 
 #### Training Program
 
+* [Kali Training](https://kali.training/)
 * [Shellter Labs](https://shellterlabs.com/en/)
 * [Pentestit](https://lab.pentestit.ru/)
 * [Hack The Box](https://www.hackthebox.eu/)
